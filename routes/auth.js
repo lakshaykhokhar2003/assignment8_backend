@@ -7,12 +7,12 @@ import {asyncHandler} from "../Utils.js";
 const router = express.Router();
 
 router.post('/register', asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     try {
         const userExist = await User.findOne({ email });
         if (userExist) return res.status(400).send('User already exists');
 
-        const user = new User({ username, email, password });
+        const user = new User({ name, email, password });
         await user.save();
         res.status(201).send('User registered');
     } catch (err) {
@@ -29,7 +29,7 @@ router.post('/login', asyncHandler(async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).send('Invalid credentials');
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
         res.json({ token });
     } catch (err) {
         res.status(400).send(err.message);

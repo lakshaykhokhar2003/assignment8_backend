@@ -9,7 +9,7 @@ const router = express.Router();
 router.route('/')
     .get(asyncHandler(async (req, res) => {
         try {
-            const events = await Event.find().populate('createdBy', 'username');
+            const events = await Event.find().populate('createdBy', 'name');
             res.json(events);
         } catch (err) {
             res.status(400).send(err.message);
@@ -55,7 +55,10 @@ router.route('/:id')
 
             if (event.createdBy.toString() !== req.user.id) return res.status(403).send('You are not authorized to delete this event');
 
-            await event.remove();
+            const user = await User.findById(req.user.id);
+            user.events = user.events.filter(e => e.toString() !== req.params.id);
+            await user.save();
+            await event.deleteOne();
             res.send('Event deleted');
         } catch (err) {
             res.status(400).send(err.message);
@@ -78,6 +81,7 @@ router.put('/attend/:eventId', jwtAuth, asyncHandler(async (req, res) => {
         const event = await Event.findById(req.params.eventId);
         if (!event) return res.status(404).send('Event not found');
 
+        if (event.createdBy.toString() === req.user.id) return res.status(400).send('You are the creator of this event');
         if (event.attendees.includes(req.user.id)) return res.status(400).send('You are already attending this event');
 
         event.attendees.push(req.user.id);
