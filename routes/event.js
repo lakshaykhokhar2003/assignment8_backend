@@ -16,9 +16,9 @@ router.route('/')
         }
     }))
     .post(jwtAuth, asyncHandler(async (req, res) => {
-        const {name, description, date} = req.body;
+        const {title, description, date,color} = req.body;
         try {
-            const event = new Event({name, description, date, createdBy: req.user.id});
+            const event = new Event({title, description, date, color, createdBy: req.user.id});
             await event.save();
 
             const user = await User.findById(req.user.id);
@@ -31,6 +31,16 @@ router.route('/')
     }));
 
 router.route('/:id')
+    .get(asyncHandler(async (req, res) => {
+        try {
+            const event = await Event.findById(req.params.id).populate('createdBy', 'name').populate('attendees', 'name');
+            if (!event) return res.status(404).send('Event not found');
+
+            res.json(event);
+        } catch (err) {
+            res.status(400).send(err.message);
+        }
+    }))
     .put(jwtAuth, asyncHandler(async (req, res) => {
         try {
             const event = await Event.findById(req.params.id);
@@ -38,10 +48,11 @@ router.route('/:id')
 
             if (event.createdBy.toString() !== req.user.id) return res.status(403).send('You are not authorized to update this event');
 
-            const {name, description, date} = req.body;
-            event.name = name || event.name;
+            const {title, description, date, color} = req.body;
+            event.title = title || event.title;
             event.description = description || event.description;
             event.date = date || event.date;
+            event.color = color || event.color;
             await event.save();
             res.json(event);
         } catch (err) {
