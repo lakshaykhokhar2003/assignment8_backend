@@ -58,7 +58,7 @@ mongooseConnection().then(() => {
         }
     });
 });
-app.use('/api/auth',authRoutes)
-app.use('/api/events', eventRoutes);
+app.use('/auth',authRoutes)
+app.use('/events', eventRoutes);
 
 server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
