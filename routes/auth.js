@@ -30,10 +30,21 @@ router.post('/login', asyncHandler(async (req, res) => {
         if (!isMatch) return res.status(400).send('Invalid credentials');
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-        res.json({ token });
+        res.json({ token,user });
     } catch (err) {
         res.status(400).send(err.message);
     }
 }));
+
+router.post('/verify', asyncHandler(async (req, res) => {
+    const {token} = req.body;
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        res.json(user);
+    } catch (err) {
+        res.status(400).send('Invalid token');
+    }
+}))
+
 
 export default router;
