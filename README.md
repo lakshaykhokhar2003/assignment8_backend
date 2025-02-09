@@ -23,12 +23,6 @@ with **JWT** for authentication and **Socket.IO** for real-time updates.
     - Events are linked to the user who created them.
     - Real-time updates for attendees using **Socket.IO**.
 
-- **Real-Time Communication**:
-    - Notify users in real-time when a new event is created or updated.
-
-- **Pagination, Filtering, and Sorting**:
-    - Fetch events with pagination, filtering by date, and sorting by popularity or date.
-
 - **Scalable and Modular Code**:
     - Clean, modular, and well-documented codebase.
 
@@ -40,7 +34,6 @@ with **JWT** for authentication and **Socket.IO** for real-time updates.
 - **Database**: MongoDB (with Mongoose for ODM)
 - **Authentication**: JSON Web Tokens (JWT)
 - **Real-Time Communication**: Socket.IO
-- **Environment Variables**: `.env`
 - **API Testing**: Postman
 
 ---
